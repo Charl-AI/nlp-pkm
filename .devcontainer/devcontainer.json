@@ -1,0 +1,63 @@
+{
+	"name": "Smart Notes",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "..",
+		"target": "dev",
+		// 05/02/23: fixes a bug with the latest version of docker
+		// feel free to remove the lines below when it gets patched
+		// https://github.com/microsoft/vscode-remote-release/issues/7958
+		"args": {
+			"BUILDKIT_INLINE_CACHE": "0"
+		}
+	},
+	"runArgs": [
+		"--gpus=all",
+		"--ipc=host"
+	],
+	"customizations": {
+		"vscode": {
+			"settings": {
+				// This is the venv path set in the Dockerfile
+				"python.defaultInterpreterPath": "/opt/venv/bin/python",
+				"python.languageServer": "Pylance",
+				"python.analysis.typeCheckingMode": "basic",
+				"python.formatting.provider": "black",
+				"black-formatter.args": [
+					"--experimental-string-processing"
+				],
+				"editor.formatOnSave": true,
+				"python.testing.pytestArgs": [
+					"tests"
+				],
+				"python.testing.unittestEnabled": false,
+				"python.testing.pytestEnabled": true,
+				"jupyter.jupyterServerType": "local",
+				"python.analysis.exclude": [
+					"**/outputs/",
+					"**/splits/",
+					"**/wandb/"
+				]
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.black-formatter",
+				"github.copilot",
+				"github.vscode-pull-request-github",
+				"njpwerner.autodocstring"
+			]
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/iterative/features/nvtop:1": {}
+	},
+	// prepend the venv to $PATH, removing the need for source /opt/venv/bin/activate
+	"remoteEnv": {
+		"PATH": "/opt/venv/bin:${containerEnv:PATH}"
+	},
+	"postCreateCommand": "poetry lock --no-update",
+	"containerUser": "vscode",
+	"shutdownAction": "none" // don't stop container on exit
+}
