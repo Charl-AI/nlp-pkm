@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["Charles Jones <cj1917@ic.ac.uk>"]
 readme = "README.md"
-packages = [{include = "subgroup_separability"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
